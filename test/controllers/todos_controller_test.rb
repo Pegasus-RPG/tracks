@@ -8,8 +8,17 @@ class TodosControllerTest < ActionController::TestCase
 
   def test_locale_index
     login_as(:other_user_email)
-    get :index
-    assert_response 200
+    @user = User.find(@request.session['user_id'])
+    locales = I18n.available_locales.map {|l| l.to_s}
+    locales.each do |locale|
+      puts locale
+      @user.preference.locale = locale
+      @user.preference.save!
+      login_as(:other_user_email)
+      # Set the locale
+      get :index
+      assert_response 200
+    end
   end
 
   ############################
